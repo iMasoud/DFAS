@@ -288,28 +288,56 @@ var DFASimulator = React.createClass({
 
     run: function(string)
     {
-        var states = this.state.states;
-        var transitions = this.state.transitions;
-        var initialStateIndex = this.state.initialStateIndex
-        var finalStateIndexes = this.state.finalStateIndexes;
-
-        var start = states[initialStateIndex];
-        var finalStates = [];
-        for(var i=0; i<finalStateIndexes.length; i++)
-        {
-            finalStates.push(states[finalStateIndexes[i]]);
-        }
-
         var characters = string.split('');
-        var state = start;
 
+        /* start validating string characters */
+        var alphabet = this.state.alphabet;
+        var str_chars_are_valid = true;
         for(var i=0; i<characters.length; i++)
         {
-            var char = characters[i];
-            state = transitions[state][char];
+            if(alphabet.indexOf(characters[i]) < 0)
+            {
+                str_chars_are_valid = false;
+            }
         }
+        /* end validating string characters */
 
-        return (finalStates.indexOf(state) >= 0);
+        if(str_chars_are_valid)
+        {
+            var states = this.state.states;
+            var transitions = this.state.transitions;
+            var initialStateIndex = this.state.initialStateIndex
+            var finalStateIndexes = this.state.finalStateIndexes;
+
+            var start = states[initialStateIndex];
+            var finalStates = [];
+            for(var i=0; i<finalStateIndexes.length; i++)
+            {
+                finalStates.push(states[finalStateIndexes[i]]);
+            }
+
+            
+            var state = start;
+
+            for(var i=0; i<characters.length; i++)
+            {
+                var char = characters[i];
+                state = transitions[state][char];
+            }
+
+            if(finalStates.indexOf(state) >= 0)
+            {
+                return 'accepted';
+            }
+            else
+            {
+                return 'rejected';
+            }
+        }
+        else
+        {
+            return 'invalid';
+        }
     },
 
     restart: function()
@@ -764,9 +792,9 @@ var Run = React.createClass({
     {
         var string = this.state.string;
 
-        var accepted = this.props.run(string);
+        var result = this.props.run(string);
 
-        if(accepted)
+        if(result == 'accepted')
         {
             sweetAlert(
                 'String Accepted!',
@@ -774,11 +802,19 @@ var Run = React.createClass({
                 'success'
             );
         }
-        else
+        else if(result == 'rejected')
         {
             sweetAlert(
                 'String Rejected!',
                 'String "' + string + '" Rejected by the DFA!',
+                'error'
+            );
+        }
+        else /* restart == 'invalid' */
+        {
+            sweetAlert(
+                'String is Invalid!',
+                'String "' + string + '" has characters that are not present in DFA alphabet!',
                 'error'
             );
         }
