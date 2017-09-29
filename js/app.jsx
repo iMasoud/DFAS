@@ -71,19 +71,19 @@ var DFASimulator = React.createClass({
                 no_character = true;
             }
 
-            if(has_duplicates)
-            {
-                sweetAlert(
-                    'Something is Wrong!',
-                    'Duplicated characters are not allowed!',
-                    'error'
-                );
-            }
-            else if(has_empty)
+            if(has_empty)
             {
                 sweetAlert(
                     'Something is Wrong!',
                     'Empty fields are not allowed!',
+                    'error'
+                );
+            }
+            else if(has_duplicates)
+            {
+                sweetAlert(
+                    'Something is Wrong!',
+                    'Duplicated characters are not allowed!',
                     'error'
                 );
             }
